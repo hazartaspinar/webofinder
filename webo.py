@@ -7,12 +7,12 @@ import sys
 import glob
 import webbrowser
 
-# Windows uyumluluğu için readline alternatifi
+# Readline compatibility for Windows
 if sys.platform == "win32":
     try:
         import pyreadline3 as readline
     except ImportError:
-        print("⚠️ pyreadline3 bulunamadı! Tab tamamlama çalışmayabilir.")
+        print("⚠️ pyreadline3 not found! Tab completion may not work.")
 else:
     import readline
 
@@ -56,41 +56,41 @@ if 'readline' in sys.modules:
     readline.parse_and_bind("tab: complete")
 
 def get_ip_list():
-    print("\nNasıl IP adresleri girmek istiyorsunuz?")
-    print("[1] Dosyadan 📄")
-    print("[2] CIDR Aralığı 🌐")
-    print("[3] Tek IP 🔍")
+    print("\nHow do you want to enter IP addresses?")
+    print("[1] From a file 📄")
+    print("[2] CIDR Range 🌐")
+    print("[3] Single IP 🔍")
     
-    choice = input("Seçiminiz (1/2/3): ")
+    choice = input("Your choice (1/2/3): ")
     
     if choice == "1":
-        file_path = input("📂 Kullanmak istediğiniz dosyanın tam yolunu girin: ")
+        file_path = input("📂 Enter the full path of the file you want to use: ")
         file_path = os.path.expanduser(file_path)
         
         if not os.path.exists(file_path):
-            print(f"❌ Hata: {file_path} bulunamadı! Lütfen dosyanın mevcut olduğundan emin olun.")
+            print(f"❌ Error: {file_path} not found! Please ensure the file exists.")
             exit()
         with open(file_path, "r") as f:
             return [line.strip() for line in f.readlines()]
     
     elif choice == "2":
-        cidr = input("🌍 CIDR formatında subnet girin (örn: 192.168.1.0/24): ")
+        cidr = input("🌍 Enter CIDR subnet (e.g., 192.168.1.0/24): ")
         return [str(ip) for ip in ipaddress.IPv4Network(cidr, strict=False)]
     
     elif choice == "3":
-        ip = input("🔎 Tek bir IP adresi girin: ")
+        ip = input("🔎 Enter a single IP address: ")
         return [ip]
     
     else:
-        print("❌ Geçersiz seçim! Program sonlandırılıyor.")
+        print("❌ Invalid choice! Exiting the program.")
         exit()
 
 def main():
     print_banner()
-    output_file = "web_services.txt"  # Sonuçları buraya kaydediyoruz
-    html_file = "web_services.html"  # HTML dosyası
+    output_file = "web_services.txt"  # Results are saved here
+    html_file = "web_services.html"  # HTML file output
     
-    # Daha kapsamlı tarama için genişletilmiş web portları listesi
+    # Extended list of web service ports for scanning
     ports_to_scan = [
         80, 443, 8080, 8443, 8000, 8888, 8081, 8090, 9000, 5000, 7000, 9090, 10000, 10443, 
         18080, 28080, 3000, 3001, 5001, 5601, 5672, 15672, 61613, 8161, 9200, 4505, 4506, 
@@ -98,9 +98,9 @@ def main():
         8082, 8083, 8091, 8092, 8448, 8500, 8778, 8880, 9001, 9042, 9091, 9201, 9444, 9999
     ]
     
-    # HTML dosyasını başlat
+    # Initialize the HTML file
     with open(html_file, "w") as f:
-        f.write("<html><body><h2>Tarama Sonuçları</h2>\n")
+        f.write("<html><body><h2>Scan Results</h2>\n")
     
     ip_list = get_ip_list()
     
@@ -113,13 +113,13 @@ def main():
     for t in threads:
         t.join()
     
-    # HTML dosyasını kapat
+    # Close the HTML file
     with open(html_file, "a") as f:
         f.write("</body></html>")
     
-    print("\n✅ Tarama tamamlandı! Sonuçlar 'web_services.txt' ve 'web_services.html' dosyasına kaydedildi.")
+    print("\n✅ Scan complete! Results saved to 'web_services.txt' and 'web_services.html'.")
     
-    # HTML dosyasını otomatik aç
+    # Open the HTML file automatically
     webbrowser.open(html_file)
 
 if __name__ == "__main__":
